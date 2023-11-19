@@ -13,65 +13,65 @@ import {
 } from "react-native-paper";
 import Toast from "react-native-toast-message";
 
-export default function ListaConsultas({ navigation, route }) {
-  const [consultas, setConsultas] = useState([]);
+export default function ListaMedicamentos({ navigation, route }) {
+  const [medicamentos, setMedicamentos] = useState([]);
   const [showModalExcluirUsuario, setShowModalExcluirUsuario] = useState(false);
-  const [consultaASerExcluida, setConsultaASerExcluida] = useState(null);
+  const [medicamentoASerExcluido, setMedicamentoASerExcluido] = useState(null);
 
   useEffect(() => {
-    loadConsultas();
+    loadMedicamentos();
   }, []);
 
-  async function loadConsultas() {
-    const response = await AsyncStorage.getItem("consultas");
+  async function loadMedicamentos() {
+    const response = await AsyncStorage.getItem("medicamentos");
     console.log(
-      "🚀 ~ file: ListaConsultasAsyncStorage.js:21 ~ loadConsultas ~ response:",
+      "🚀 ~ file: ListaMedicamentosAsyncStorage.js:21 ~ loadMedicamentos ~ response:",
       response
     );
-    const consultasStorage = response ? JSON.parse(response) : [];
-    setConsultas(consultasStorage);
+    const medicamentosStorage = response ? JSON.parse(response) : [];
+    setMedicamentos(medicamentosStorage);
   }
 
   const showModal = () => setShowModalExcluirUsuario(true);
 
   const hideModal = () => setShowModalExcluirUsuario(false);
 
-  async function adicionarConsulta(consulta) {
-    let novaListaConsultas = consultas;
-    novaListaConsultas.push(consulta);
-    await AsyncStorage.setItem("consultas", JSON.stringify(novaListaConsultas));
-    setConsultas(novaListaConsultas);
+  async function adicionarMedicamento(medicamento) {
+    let novaListaMedicamentos = medicamentos;
+    novaListaMedicamentos.push(medicamento);
+    await AsyncStorage.setItem("medicamentos", JSON.stringify(novaListaMedicamentos));
+    setMedicamentos(novaListaMedicamentos);
   }
 
-  async function editarConsulta(consultaAntiga, novosDados) {
-    console.log("CONSULTA ANTIGA -> ", consultaAntiga);
+  async function editarMedicamento(medicamentoAntigo, novosDados) {
+    console.log("MEDICAMENTO ANTIGO -> ", medicamentoAntigo);
     console.log("DADOS NOVOS -> ", novosDados);
 
-    const novaListaConsultas = consultas.map((consulta) => {
-      if (consulta == consultaAntiga) {
+    const novaListaMedicamentos = medicamentos.map((medicamento) => {
+      if (medicamento == medicamentoAntigo) {
         return novosDados;
       } else {
-        return consulta;
+        return medicamento;
       }
     });
 
-    await AsyncStorage.setItem("consultas", JSON.stringify(novaListaConsultas));
-    setConsultas(novaListaConsultas);
+    await AsyncStorage.setItem("medicamentos", JSON.stringify(novaListaMedicamentos));
+    setMedicamentos(novaListaMedicamentos);
   }
 
-  async function excluirConsulta(consulta) {
-    const novaListaConsultas = consultas.filter((p) => p !== consulta);
-    await AsyncStorage.setItem("consultas", JSON.stringify(novaListaConsultas));
-    setConsultas(novaListaConsultas);
+  async function excluirMedicamento(medicamento) {
+    const novaListaMedicamentos = medicamentos.filter((p) => p !== medicamento);
+    await AsyncStorage.setItem("medicamentos", JSON.stringify(novaListaMedicamentos));
+    setMedicamentos(novaListaMedicamentos);
     Toast.show({
       type: "success",
-      text1: "Consulta excluída com sucesso!",
+      text1: "Medicamento excluído com sucesso!",
     });
   }
 
-  function handleExluirConsulta() {
-    excluirConsulta(consultaASerExcluida);
-    setConsultaASerExcluida(null);
+  function handleExluirMedicamento() {
+    excluirMedicamento(medicamentoASerExcluido);
+    setMedicamentoASerExcluido(null);
     hideModal();
   }
 
@@ -79,46 +79,45 @@ export default function ListaConsultas({ navigation, route }) {
     <>
       <View style={styles.container}>
         <Text variant="titleLarge" style={styles.title}>
-          Lista de Consultas
+          Lista de Medicamentos
         </Text>
 
         <FlatList
           style={styles.list}
-          data={consultas}
+          data={medicamentos}
           renderItem={({ item }) => (
             <Card mode="outlined" style={styles.card}>
               <Card.Content style={styles.cardContent}>
                 <View style={styles.textContainer}>
-                <Avatar.Image size={50} source={require('../../../assets/logoconsulta.jpg')} />
+                <Avatar.Image size={50} source={require('../../../assets/logomedicamento.png')} />
                   <Text variant="titleMedium" style={styles.text}>
-                    {item?.paciente}
+                    {item?.nome}
                   </Text>
                   <Divider style={styles.divider} />
                   <Text variant="bodyLarge" style={styles.text}>
-                    Data: {item?.data}
+                    Dosagem: {item?.dosagem}
                   </Text>
                   <Divider style={styles.divider} />
                   <Text variant="bodyLarge" style={styles.text}>
-                    Médico: {item?.medico}
+                    Efeitos: {item.efeitos}
                   </Text>
                   <Divider style={styles.divider} />
                   <Text variant="bodyLarge" style={styles.text}>
-                    Motivo: {item.motivo}
+                    Descrição: {item?.descricao}
                   </Text>
                   <Divider style={styles.divider} />
                   <Text variant="bodyLarge" style={styles.text}>
-                    Observações: {item.observacoes}
+                    Fabricante: {item.fabricante}
                   </Text>
-                  <Divider style={styles.divider} />
                 </View>
               </Card.Content>
               <Card.Actions style={styles.buttonsContainer}>
                 <View style={styles.buttonsWrapper}>
                   <Button
                     onPress={() =>
-                      navigation.push("FormConsulta", {
-                        acao: editarConsulta,
-                        consulta: item,
+                      navigation.push("FormMedicamento", {
+                        acao: editarMedicamento,
+                        medicamento: item,
                       })
                     }
                     style={styles.editButton}
@@ -128,7 +127,7 @@ export default function ListaConsultas({ navigation, route }) {
                   </Button>
                   <Button
                     onPress={() => {
-                      setConsultaASerExcluida(item);
+                      setMedicamentoASerExcluido(item);
                       showModal();
                     }}
                     style={styles.deleteButton}
@@ -147,8 +146,8 @@ export default function ListaConsultas({ navigation, route }) {
           icon="plus"
           style={styles.fab}
           onPress={() =>
-            navigation.push("FormConsulta", {
-              acao: adicionarConsulta,
+            navigation.push("FormMedicamento", {
+              acao: adicionarMedicamento,
             })
           }
         />
@@ -159,12 +158,12 @@ export default function ListaConsultas({ navigation, route }) {
             <Dialog.Title>Atenção!</Dialog.Title>
             <Dialog.Content>
               <Text variant="bodyMedium">
-                Tem certeza que deseja excluir este consulta?
+                Tem certeza que deseja excluir este medicamento?
               </Text>
             </Dialog.Content>
             <Dialog.Actions>
               <Button onPress={hideModal}>VOLTAR</Button>
-              <Button onPress={handleExluirConsulta}>SIM</Button>
+              <Button onPress={handleExluirMedicamento}>SIM</Button>
             </Dialog.Actions>
           </Dialog>
         </Portal>

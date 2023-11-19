@@ -4,7 +4,7 @@ import ListaPacientes from "./ListaPacientes.js";
 
 const Stack = createStackNavigator();
 
-export default function StackPessoasAsyncStorage() {
+export default function StackPacientesAsyncStorage() {
   return (
     <Stack.Navigator
       screenOptions={{ headerShown: false }}

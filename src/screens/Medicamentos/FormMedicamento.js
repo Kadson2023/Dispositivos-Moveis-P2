@@ -3,67 +3,65 @@ import { StyleSheet, View } from "react-native";
 import { Button, Text, TextInput } from "react-native-paper";
 import Toast from "react-native-toast-message";
 
-export default function FormExame({ navigation, route }) {
-  const { acao, exame: exameAntigo } = route.params;
+export default function FormMedicamento({ navigation, route }) {
+  const { acao, medicamento: medicamentoAntigo } = route.params;
 
   const [nome, setNome] = useState("");
+  const [dosagem, setDosagem] = useState("");
   const [descricao, setDescricao] = useState("");
-  const [data, setData] = useState("");
-  const [medico, setMedico] = useState("");
+  const [efeitos, setEfeitos] = useState("");
+  const [fabricante, setFabricante] = useState("");
 
   const [showMensagemErro, setShowMensagemErro] = useState(false);
 
   useEffect(() => {
-    console.log("exame -> ", exameAntigo);
+    console.log("medicamento -> ", medicamentoAntigo);
 
-    if (exameAntigo) {
-      setNome(exameAntigo.nome);
-      setDescricao(exameAntigo.descricao);
-      setData(exameAntigo.data);
-      setMedico(exameAntigo.medico);
+    if (medicamentoAntigo) {
+      setNome(medicamentoAntigo.nome);
+      setDosagem(medicamentoAntigo.dosagem);
+      setDescricao(medicamentoAntigo.descricao);
+      setEfeitos(medicamentoAntigo.efeitos);
+      setFabricante(medicamentoAntigo.fabricante);
     }
   }, []);
 
   function salvar() {
-    if (
-      nome === "" ||
-      data === "" ||
-      medico === "" ||
-      descricao === "" 
-    ) {
+    if (nome === "" || dosagem === "" || efeitos === "" || descricao === "" || fabricante === "") {
       setShowMensagemErro(true);
     } else {
       setShowMensagemErro(false);
 
-      const novoExame = {
+      const novoMedicamento = {
         nome: nome,
-        data: data,
-        medico: medico,
+        dosagem: dosagem,
+        efeitos: efeitos,
         descricao: descricao,
+        fabricante: fabricante
       };
 
-      const objetoEmString = JSON.stringify(novoExame);
+      const objetoEmString = JSON.stringify(novoMedicamento);
       console.log(
-        "🚀 ~ file: FormExame.js:47 ~ salvar ~ objetoEmString:",
+        "🚀 ~ file: FormMedicamento.js:47 ~ salvar ~ objetoEmString:",
         objetoEmString
       );
 
       console.log(typeof objetoEmString);
 
       const objeto = JSON.parse(objetoEmString);
-      console.log("🚀 ~ file: FormExame.js:52 ~ salvar ~ objeto:", objeto);
+      console.log("🚀 ~ file: FormMedicamento.js:52 ~ salvar ~ objeto:", objeto);
 
       console.log(typeof objeto);
 
-      if (exameAntigo) {
-        acao(exameAntigo, novoExame);
+      if (medicamentoAntigo) {
+        acao(medicamentoAntigo, novoMedicamento);
       } else {
-        acao(novoExame);
+        acao(novoMedicamento);
       }
 
       Toast.show({
         type: "success",
-        text1: "Exame cadastrado com sucesso!",
+        text1: "Medicamento cadastrado com sucesso!",
       });
 
       navigation.goBack();
@@ -73,7 +71,7 @@ export default function FormExame({ navigation, route }) {
   return (
     <View style={styles.container}>
       <Text variant="titleLarge" style={styles.title}>
-        {exameAntigo ? "Editar Exame" : "Adicionar Exame"}
+        {medicamentoAntigo ? "Editar Medicamento" : "Adicionar Medicamento"}
       </Text>
 
       <View style={styles.inputContainer}>
@@ -88,10 +86,19 @@ export default function FormExame({ navigation, route }) {
 
         <TextInput
           style={styles.input}
-          label={"Data"}
+          label={"Dosagem"}
           mode="outlined"
-          value={data}
-          onChangeText={(text) => setData(text)}
+          value={dosagem}
+          onChangeText={(text) => setDosagem(text)}
+          onFocus={() => setShowMensagemErro(false)}
+        />
+
+        <TextInput
+          style={styles.input}
+          label={"Efeitos"}
+          mode="outlined"
+          value={efeitos}
+          onChangeText={(text) => setEfeitos(text)}
           onFocus={() => setShowMensagemErro(false)}
         />
 
@@ -106,10 +113,10 @@ export default function FormExame({ navigation, route }) {
 
         <TextInput
           style={styles.input}
-          label={"Médico"}
+          label={"Fabricante"}
           mode="outlined"
-          value={medico}
-          onChangeText={(text) => setMedico(text)}
+          value={fabricante}
+          onChangeText={(text) => setFabricante(text)}
           onFocus={() => setShowMensagemErro(false)}
         />
 

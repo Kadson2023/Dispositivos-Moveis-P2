@@ -181,6 +181,8 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+    flex: 1,
+    backgroundColor: 'rgba(76, 175, 80, 0.2)'
   },
   title: {
     fontWeight: "bold",
@@ -218,8 +220,10 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   divider: {
-    width: "100%",
-    marginVertical: 10,
+    borderBottomColor: "#fff", // Cor da linha separadora
+    borderBottomWidth: 1,
+    width: "100%", // Largura total
+    marginVertical: 15, // Espaçamento vertical das linhas
   },
   buttonsContainer: {
     justifyContent: "center",

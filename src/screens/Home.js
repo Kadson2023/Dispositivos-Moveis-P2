@@ -19,6 +19,19 @@ export default function Home({ navigation }) {
         <View style={styles.buttonsContainer}>
           <TouchableOpacity
             style={styles.button}
+            onPress={() => handleNavigation('Médicos')}
+          >
+            <Text style={styles.buttonText}>Médicos</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => handleNavigation('Pacientes')}
+          >
+            <Text style={styles.buttonText}>Pacientes</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.button}
             onPress={() => handleNavigation('Consultas')}
           >
             <Text style={styles.buttonText}>Consultas</Text>
@@ -33,24 +46,11 @@ export default function Home({ navigation }) {
 
           <TouchableOpacity
             style={styles.button}
-            onPress={() => handleNavigation('Funcionarios')}
+            onPress={() => handleNavigation('Medicamentos')}
           >
-            <Text style={styles.buttonText}>Funcionários</Text>
+            <Text style={styles.buttonText}>Medicamentos</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => handleNavigation('Medicos')}
-          >
-            <Text style={styles.buttonText}>Médicos</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => handleNavigation('Pacientes')}
-          >
-            <Text style={styles.buttonText}>Pacientes</Text>
-          </TouchableOpacity>
         </View>
       </View>
     </View>
@@ -61,6 +61,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: 'rgba(76, 175, 80, 0.2)',
+    width: '100%',
+    height: 200
   },
   separator: {
     height: 1,
