@@ -228,10 +228,10 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   divider: {
-    borderBottomColor: "#fff", // Cor da linha separadora
+    borderBottomColor: "#fff", 
     borderBottomWidth: 1,
-    width: "100%", // Largura total
-    marginVertical: 15, // Espaçamento vertical das linhas
+    width: "100%", 
+    marginVertical: 15, 
   },
   buttonsContainer: {
     justifyContent: "center",

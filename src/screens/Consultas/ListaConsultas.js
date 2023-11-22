@@ -33,7 +33,7 @@ export default function ListaConsultas({ navigation, route }) {
 
     const consultasFormatadas = consultasStorage.map((consulta) => ({
       ...consulta,
-      data: new Date(consulta.data), // Converter a string para objeto Date
+      data: new Date(consulta.data), 
     }));
     setConsultas(consultasFormatadas);
   }

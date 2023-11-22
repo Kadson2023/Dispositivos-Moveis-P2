@@ -104,7 +104,7 @@ export default function FormConsulta({ navigation, route }) {
         />
         {showDatePicker && (
           <DateTimePicker
-            value={data || new Date()} // Use a default date if data is undefined
+            value={data || new Date()} 
             mode="date"
             display="default"
             onChange={onChangeDate}
@@ -114,7 +114,7 @@ export default function FormConsulta({ navigation, route }) {
           style={styles.input}
           label="Data"
           mode="outlined"
-          value={data ? data.toLocaleDateString() : ""} // Check if data is defined before calling toLocaleDateString
+          value={data ? data.toLocaleDateString() : ""} 
           onFocus={() => setShowDatePicker(true)}
         />
 
