@@ -107,7 +107,15 @@ export default function ListaPacientes({ navigation, route }) {
                   </Text>
                   <Divider style={styles.divider} />
                   <Text variant="bodyLarge" style={styles.text}>
-                    Alergias: {item.alergias}
+                    CPF: {item.cpf}
+                  </Text>
+                  <Divider style={styles.divider} />
+                  <Text variant="bodyLarge" style={styles.text}>
+                    E-mail: {item.email}
+                  </Text>
+                  <Divider style={styles.divider} />
+                  <Text variant="bodyLarge" style={styles.text}>
+                    Telefone: {item.telefone}
                   </Text>
                   <Divider style={styles.divider} />
                   <Text variant="bodyLarge" style={styles.text}>

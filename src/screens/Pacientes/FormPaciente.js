@@ -2,6 +2,20 @@ import React, { useEffect, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import { Button, Text, TextInput } from "react-native-paper";
 import Toast from "react-native-toast-message";
+import * as Yup from "yup";
+
+const validationSchema = Yup.object().shape({
+  nome: Yup.string().required("O Nome é obrigatório!"),
+  idade: Yup.number()
+    .required("A idade é obrigatória!")
+    .positive("A idade deve ser um número positivo!")
+    .integer("A idade deve ser um número inteiro!"),
+  endereco: Yup.string().required("O endereço é obrigatório!"),
+  email: Yup.string().required("O e-mail é obrigatório!"),
+  medicacoes: Yup.string().required("As medicações são obrigatórias!"),
+  cpf: Yup.string().required("O CPF é obrigatório!"),
+  telefone: Yup.string().required("O telefone é obrigatório!"),
+});
 
 export default function FormPaciente({ navigation, route }) {
   const { acao, paciente: pacienteAntigo } = route.params;
@@ -9,63 +23,72 @@ export default function FormPaciente({ navigation, route }) {
   const [nome, setNome] = useState("");
   const [idade, setIdade] = useState("");
   const [endereco, setEndereco] = useState("");
-  const [alergias, setAlergias] = useState("");
+  const [email, setEmail] = useState("");
+  const [cpf, setCpf] = useState("");
+  const [telefone, setTelefone] = useState("");
   const [medicacoes, setMedicacoes] = useState("");
-
   const [showMensagemErro, setShowMensagemErro] = useState(false);
+  const [errors, setErrors] = useState({});
 
   useEffect(() => {
-    console.log("paciente -> ", pacienteAntigo);
-
     if (pacienteAntigo) {
       setNome(pacienteAntigo.nome);
-      setIdade(pacienteAntigo.idade);
+      setIdade(pacienteAntigo.idade.toString());
       setEndereco(pacienteAntigo.endereco);
-      setAlergias(pacienteAntigo.alergias);
+      setEmail(pacienteAntigo.email);
       setMedicacoes(pacienteAntigo.medicacoes);
+      setCpf(pacienteAntigo.cpf);
+      setTelefone(pacienteAntigo.telefone);
     }
-  }, []);
+  }, [pacienteAntigo]);
+
+  async function handleValidation() {
+    try {
+      await validationSchema.validate(
+        { nome, idade, endereco, email, medicacoes, cpf, telefone },
+        { abortEarly: false }
+      );
+      return true;
+    } catch (error) {
+      const formattedErrors = {};
+      error.inner.forEach((err) => {
+        formattedErrors[err.path] = err.message;
+      });
+      setErrors(formattedErrors);
+      return false;
+    }
+  }
 
   function salvar() {
-    if (nome === "" || idade === "" || endereco === "" || alergias === "" || medicacoes === "") {
-      setShowMensagemErro(true);
-    } else {
-      setShowMensagemErro(false);
+    handleValidation().then((isValid) => {
+      if (isValid) {
+        const idadeNumber = parseInt(idade, 10);
+        const novoPaciente = {
+          nome,
+          idade: idadeNumber,
+          endereco,
+          email,
+          medicacoes,
+          cpf,
+          telefone
+        };
 
-      const novoPaciente = {
-        nome: nome,
-        idade: idade,
-        endereco: endereco,
-        alergias: alergias,
-        medicacoes: medicacoes
-      };
+        if (pacienteAntigo) {
+          acao(pacienteAntigo, novoPaciente);
+        } else {
+          acao(novoPaciente);
+        }
 
-      const objetoEmString = JSON.stringify(novoPaciente);
-      console.log(
-        "🚀 ~ file: FormPaciente.js:47 ~ salvar ~ objetoEmString:",
-        objetoEmString
-      );
+        Toast.show({
+          type: "success",
+          text1: "Paciente cadastrado com sucesso!",
+        });
 
-      console.log(typeof objetoEmString);
-
-      const objeto = JSON.parse(objetoEmString);
-      console.log("🚀 ~ file: FormPaciente.js:52 ~ salvar ~ objeto:", objeto);
-
-      console.log(typeof objeto);
-
-      if (pacienteAntigo) {
-        acao(pacienteAntigo, novoPaciente);
+        navigation.goBack();
       } else {
-        acao(novoPaciente);
+        setShowMensagemErro(true);
       }
-
-      Toast.show({
-        type: "success",
-        text1: "Paciente cadastrado com sucesso!",
-      });
-
-      navigation.goBack();
-    }
+    });
   }
 
   return (
@@ -83,6 +106,27 @@ export default function FormPaciente({ navigation, route }) {
           onChangeText={(text) => setNome(text)}
           onFocus={() => setShowMensagemErro(false)}
         />
+        {errors.nome && <Text style={{ color: "red" }}>{errors.nome}</Text>}
+
+        <TextInput
+          style={styles.input}
+          label={"CPF"}
+          mode="outlined"
+          value={cpf}
+          onChangeText={(text) => setCpf(text)}
+          onFocus={() => setShowMensagemErro(false)}
+        />
+        {errors.cpf && <Text style={{ color: "red" }}>{errors.cpf}</Text>}
+
+        <TextInput
+          style={styles.input}
+          label={"Telefone"}
+          mode="outlined"
+          value={telefone}
+          onChangeText={(text) => setTelefone(text)}
+          onFocus={() => setShowMensagemErro(false)}
+        />
+        {errors.telefone && <Text style={{ color: "red" }}>{errors.telefone}</Text>}
 
         <TextInput
           style={styles.input}
@@ -93,6 +137,7 @@ export default function FormPaciente({ navigation, route }) {
           onChangeText={(text) => setIdade(text)}
           onFocus={() => setShowMensagemErro(false)}
         />
+        {errors.idade && <Text style={{ color: "red" }}>{errors.idade}</Text>}
 
         <TextInput
           style={styles.input}
@@ -102,15 +147,17 @@ export default function FormPaciente({ navigation, route }) {
           onChangeText={(text) => setEndereco(text)}
           onFocus={() => setShowMensagemErro(false)}
         />
+        {errors.endereco && <Text style={{ color: "red" }}>{errors.endereco}</Text>}
 
         <TextInput
           style={styles.input}
-          label={"Alergias"}
+          label={"Email"}
           mode="outlined"
-          value={alergias}
-          onChangeText={(text) => setAlergias(text)}
+          value={email}
+          onChangeText={(text) => setEmail(text)}
           onFocus={() => setShowMensagemErro(false)}
         />
+        {errors.email && <Text style={{ color: "red" }}>{errors.email}</Text>}
 
         <TextInput
           style={styles.input}
@@ -120,6 +167,7 @@ export default function FormPaciente({ navigation, route }) {
           onChangeText={(text) => setMedicacoes(text)}
           onFocus={() => setShowMensagemErro(false)}
         />
+        {errors.medicacoes && <Text style={{ color: "red" }}>{errors.medicacoes}</Text>}
 
         {showMensagemErro && (
           <Text style={{ color: "red", textAlign: "center" }}>

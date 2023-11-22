@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import { Button, Text, TextInput } from "react-native-paper";
 import Toast from "react-native-toast-message";
+import DateTimePicker from "@react-native-community/datetimepicker";
 
 export default function FormConsulta({ navigation, route }) {
   const { acao, consulta: consultaAntiga } = route.params;
@@ -11,6 +12,7 @@ export default function FormConsulta({ navigation, route }) {
   const [paciente, setPaciente] = useState("");
   const [motivo, setMotivo] = useState("");
   const [observacoes, setObservacoes] = useState("");
+  const [showDatePicker, setShowDatePicker] = useState(false);
 
   const [showMensagemErro, setShowMensagemErro] = useState(false);
 
@@ -43,7 +45,7 @@ export default function FormConsulta({ navigation, route }) {
         data: data,
         medico: medico,
         motivo: motivo,
-        observacoes: observacoes
+        observacoes: observacoes,
       };
 
       const objetoEmString = JSON.stringify(novaConsulta);
@@ -74,6 +76,12 @@ export default function FormConsulta({ navigation, route }) {
     }
   }
 
+  const onChangeDate = (event, selectedDate) => {
+    setShowDatePicker(false);
+    if (selectedDate) {
+      setData(selectedDate);
+    }
+  };
   return (
     <View style={styles.container}>
       <Text variant="titleLarge" style={styles.title}>
@@ -90,13 +98,24 @@ export default function FormConsulta({ navigation, route }) {
           onFocus={() => setShowMensagemErro(false)}
         />
 
+        <Button
+          title="Selecionar Data"
+          onPress={() => setShowDatePicker(true)}
+        />
+        {showDatePicker && (
+          <DateTimePicker
+            value={data || new Date()} // Use a default date if data is undefined
+            mode="date"
+            display="default"
+            onChange={onChangeDate}
+          />
+        )}
         <TextInput
           style={styles.input}
-          label={"Data"}
+          label="Data"
           mode="outlined"
-          value={data}
-          onChangeText={(text) => setData(text)}
-          onFocus={() => setShowMensagemErro(false)}
+          value={data ? data.toLocaleDateString() : ""} // Check if data is defined before calling toLocaleDateString
+          onFocus={() => setShowDatePicker(true)}
         />
 
         <TextInput

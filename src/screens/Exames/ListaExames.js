@@ -30,6 +30,12 @@ export default function ListaExames({ navigation, route }) {
     );
     const examesStorage = response ? JSON.parse(response) : [];
     setExames(examesStorage);
+
+    const examesFormatados = examesStorage.map((exame) => ({
+      ...exame,
+      data: new Date(exame.data), // Converter a string para objeto Date
+    }));
+    setExames(examesFormatados);
   }
 
   const showModal = () => setShowModalExcluirUsuario(true);
@@ -95,7 +101,10 @@ export default function ListaExames({ navigation, route }) {
                   </Text>
                   <Divider style={styles.divider} />
                   <Text variant="bodyLarge" style={styles.text}>
-                    Data: {item?.data}
+                    Data:{" "}
+                    {item.data instanceof Date
+                      ? item.data.toLocaleDateString()
+                      : "Data não disponível"}
                   </Text>
                   <Divider style={styles.divider} />
                   <Text variant="bodyLarge" style={styles.text}>
