@@ -80,6 +80,7 @@ export default function FormConsulta({ navigation, route }) {
     setShowDatePicker(false);
     if (selectedDate) {
       setData(selectedDate);
+      
     }
   };
   return (

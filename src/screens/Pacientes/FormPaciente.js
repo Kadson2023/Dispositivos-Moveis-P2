@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { StyleSheet, View } from "react-native";
+import { TextInputMask } from "react-native-masked-text";
 import { Button, Text, TextInput } from "react-native-paper";
 import Toast from "react-native-toast-message";
 import * as Yup from "yup";
@@ -112,9 +113,16 @@ export default function FormPaciente({ navigation, route }) {
           style={styles.input}
           label={"CPF"}
           mode="outlined"
+          placeholder="000.000.000-00"
           value={cpf}
           onChangeText={(text) => setCpf(text)}
           onFocus={() => setShowMensagemErro(false)}
+          render={(props) => (
+            <TextInputMask 
+            {...props}
+            type={'cpf'}
+            />
+          )}
         />
         {errors.cpf && <Text style={{ color: "red" }}>{errors.cpf}</Text>}
 
@@ -122,9 +130,16 @@ export default function FormPaciente({ navigation, route }) {
           style={styles.input}
           label={"Telefone"}
           mode="outlined"
+          placeholder="(00) 0 0000-0000"
           value={telefone}
           onChangeText={(text) => setTelefone(text)}
           onFocus={() => setShowMensagemErro(false)}
+          render={(props) => (
+            <TextInputMask 
+            {...props}
+            type={'cel-phone'}
+            />
+          )}
         />
         {errors.telefone && <Text style={{ color: "red" }}>{errors.telefone}</Text>}
 

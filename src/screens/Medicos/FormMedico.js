@@ -1,7 +1,18 @@
+import { validateYupSchema } from "formik";
 import React, { useEffect, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import { Button, Text, TextInput } from "react-native-paper";
 import Toast from "react-native-toast-message";
+import * as Yup from "yup";
+
+const validationSchema = Yup.object().shape({
+  nome: Yup.string().required("O Nome é obrigatório!"),
+  especialidade: Yup.string.required(),
+  crm: Yup.string().required("O endereço é obrigatório!"),
+  endereco: Yup.string().required("O e-mail é obrigatório!"),
+  telefone: Yup.string().required("O telefone é obrigatório!"),
+});
+
 
 export default function FormMedico({ navigation, route }) {
   const { acao, medico: medicoAntigo } = route.params;
@@ -13,6 +24,7 @@ export default function FormMedico({ navigation, route }) {
   const [endereco, setEndereco] = useState("");
 
   const [showMensagemErro, setShowMensagemErro] = useState(false);
+  const [errors, setErrors] = useState({});
 
   useEffect(() => {
     console.log("medico -> ", medicoAntigo);
@@ -26,46 +38,51 @@ export default function FormMedico({ navigation, route }) {
     }
   }, []);
 
-  function salvar() {
-    if (nome === "" || especialidade === "" || endereco === "" || crm === "" || telefone === "") {
-      setShowMensagemErro(true);
-    } else {
-      setShowMensagemErro(false);
-
-      const novoMedico = {
-        nome: nome,
-        especialidade: especialidade,
-        endereco: endereco,
-        crm: crm,
-        telefone: telefone
-      };
-
-      const objetoEmString = JSON.stringify(novoMedico);
-      console.log(
-        "🚀 ~ file: FormMedico.js:47 ~ salvar ~ objetoEmString:",
-        objetoEmString
+  async function handleValidation() {
+    try {
+      await validationSchema.validate(
+        { nome, especialidade, crm, endereco, telefone },
+        { abortEarly: false }
       );
-
-      console.log(typeof objetoEmString);
-
-      const objeto = JSON.parse(objetoEmString);
-      console.log("🚀 ~ file: FormMedico.js:52 ~ salvar ~ objeto:", objeto);
-
-      console.log(typeof objeto);
-
-      if (medicoAntigo) {
-        acao(medicoAntigo, novoMedico);
-      } else {
-        acao(novoMedico);
-      }
-
-      Toast.show({
-        type: "success",
-        text1: "Médico cadastrado com sucesso!",
+      return true;
+    } catch (error) {
+      const formattedErrors = {};
+      error.inner.forEach((err) => {
+        formattedErrors[err.path] = err.message;
       });
-
-      navigation.goBack();
+      setErrors(formattedErrors);
+      return false;
     }
+  }
+
+  function salvar() {
+    handleValidation().then((isValid) => {
+      if (isValid) {
+        const idadeNumber = parseInt(idade, 10);
+        const novoPaciente = {
+          nome,
+          especialidade,
+          crm,
+          endereco,
+          telefone,
+        };
+
+        if (pacienteAntigo) {
+          acao(pacienteAntigo, novoPaciente);
+        } else {
+          acao(novoPaciente);
+        }
+
+        Toast.show({
+          type: "success",
+          text1: "Paciente cadastrado com sucesso!",
+        });
+
+        navigation.goBack();
+      } else {
+        setShowMensagemErro(true);
+      }
+    });
   }
 
   return (
@@ -83,6 +100,7 @@ export default function FormMedico({ navigation, route }) {
           onChangeText={(text) => setNome(text)}
           onFocus={() => setShowMensagemErro(false)}
         />
+        {errors.nome && <Text style={{ color: "red" }}>{errors.nome}</Text>}
 
         <TextInput
           style={styles.input}
@@ -92,6 +110,7 @@ export default function FormMedico({ navigation, route }) {
           onChangeText={(text) => setEspecialidade(text)}
           onFocus={() => setShowMensagemErro(false)}
         />
+        {errors.especialidade && <Text style={{ color: "red" }}>{errors.especialidade}</Text>}
 
         <TextInput
           style={styles.input}
@@ -101,6 +120,7 @@ export default function FormMedico({ navigation, route }) {
           onChangeText={(text) => setEndereco(text)}
           onFocus={() => setShowMensagemErro(false)}
         />
+        {errors.endereco && <Text style={{ color: "red" }}>{errors.endereco}</Text>}
 
         <TextInput
           style={styles.input}
@@ -110,6 +130,7 @@ export default function FormMedico({ navigation, route }) {
           onChangeText={(text) => setCrm(text)}
           onFocus={() => setShowMensagemErro(false)}
         />
+        {errors.crm && <Text style={{ color: "red" }}>{errors.crm}</Text>}
 
         <TextInput
           style={styles.input}
@@ -119,6 +140,7 @@ export default function FormMedico({ navigation, route }) {
           onChangeText={(text) => setTelefone(text)}
           onFocus={() => setShowMensagemErro(false)}
         />
+        {errors.telefone && <Text style={{ color: "red" }}>{errors.telefone}</Text>}
 
         {showMensagemErro && (
           <Text style={{ color: "red", textAlign: "center" }}>
